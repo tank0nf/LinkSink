@@ -28,7 +28,7 @@
 /var/bootstrap.php.cache
 /bin/*
 !bin/console
-!bin/composer
+!bin/composer*
 !bin/symfony_requirements
 /vendor/
 /assets/vendor
