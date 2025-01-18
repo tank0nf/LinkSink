@@ -81,7 +81,7 @@ jobs:
             git reset --hard origin/main
             
             # Install dependencies and clear the cache
-            ./bin/composer install --no-dev --optimize-autoloader
+            APP_ENV=prod ./bin/composer install --no-dev --optimize-autoloader
             php bin/console cache:clear --env=prod
             
-            APP_ENV=prod php bin/console assets:install --no-debug
+            php bin/console assets:install --no-debug --env=prod
