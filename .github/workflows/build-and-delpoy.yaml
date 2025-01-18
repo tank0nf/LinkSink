@@ -51,7 +51,7 @@ jobs:
           coverage: none
 
       - name: Install dependencies
-        run: composer install --no-dev --optimize-autoloader
+        run: composer install --no-dev --optimize-autoloader --no-scripts
 
       - name: Set up environment
         run: cp .env.prod .env
@@ -59,17 +59,30 @@ jobs:
       - name: Build assets
         run: php bin/console assets:install
 
-      - name: Clear and warm up cache
-        run: |
-          php bin/console cache:clear --env=prod
-          php bin/console cache:warmup --env=prod
-
-      - name: Publish
-        uses: nogsantos/scp-deploy@v1.3.0
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v0.1.8
         with:
-          src: ./public/*
-          host: ${{ secrets.SSH_HOST }}
-          remote: ${{ secrets.SSH_DIR }}
-          port: ${{ secrets.SSH_PORT }}
-          user: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            # Set the project directory
+            PROJECT_DIR="${{ secrets.PROJECT_DIR }}/linksink"
+            DATABASE_PROD_URL="${{ secrets.DATABASE_PROD_URL }}"
+            
+            # Check if the directory exists, if not, clone the repository
+            if [ ! -d "$PROJECT_DIR" ]; then
+              echo "Project not found. Cloning repository..."
+              git clone https://github.com/freifunk/linksink.git $PROJECT_DIR
+            fi
+            
+            # Navigate to the project directory
+            cd $PROJECT_DIR
+            
+            # Ensure the repository is up-to-date
+            git fetch --all
+            git reset --hard origin/main
+            
+            # Install dependencies and clear the cache
+            composer install --no-dev --optimize-autoloader
+            php bin/console cache:clear --env=prod
