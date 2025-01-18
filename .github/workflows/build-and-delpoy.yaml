@@ -56,9 +56,6 @@ jobs:
       - name: Set up environment
         run: cp .env.prod .env
 
-      - name: Build assets
-        run: APP_ENV=prod php bin/console assets:install --no-debug
-
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v0.1.8
         with:
@@ -86,3 +83,5 @@ jobs:
             # Install dependencies and clear the cache
             composer install --no-dev --optimize-autoloader
             php bin/console cache:clear --env=prod
+            
+            APP_ENV=prod php bin/console assets:install --no-debug
