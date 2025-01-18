@@ -51,7 +51,7 @@ jobs:
           coverage: none
 
       - name: Install dependencies
-        run: composer install --no-dev --optimize-autoloader --no-scripts
+        run: ./bin/composer install --no-dev --optimize-autoloader --no-scripts
 
       - name: Set up environment
         run: cp .env.prod .env
@@ -81,7 +81,7 @@ jobs:
             git reset --hard origin/main
             
             # Install dependencies and clear the cache
-            composer install --no-dev --optimize-autoloader
+            ./bin/composer install --no-dev --optimize-autoloader
             php bin/console cache:clear --env=prod
             
             APP_ENV=prod php bin/console assets:install --no-debug

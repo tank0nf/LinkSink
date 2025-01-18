@@ -3,6 +3,9 @@
   "extends": [
     "config:base"
   ],
+  "fileMatch": [
+    "bin/composer"
+  ],
   "packageRules": [
     {
       "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
@@ -17,6 +20,14 @@
       "automergeStrategy": "rebase",
       "automergeSchedule": ["after 7am every weekday"],
       "schedule": ["after 6am every weekday"]
+    },
+    {
+      "matchFiles": ["bin/composer"],
+      "matchPackageNames": ["composer"],
+      "enabled": true,
+      "updateTypes": ["patch", "minor", "major"],
+      "addLabels": ["composer-update"],
+      "commitMessageTopic": "Composer binary"
     }
   ]
 }
