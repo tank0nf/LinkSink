@@ -65,8 +65,6 @@ jobs:
           script: |
             # Set the project directory
             PROJECT_DIR="${{ secrets.PROJECT_DIR }}/linksink"
-            DATABASE_PROD_URL="${{ secrets.DATABASE_PROD_URL }}"
-            APP_SECRET="{{ secrets.APP_SECRET }}"
             
             # Check if the directory exists, if not, clone the repository
             if [ ! -d "$PROJECT_DIR" ]; then
@@ -82,10 +80,13 @@ jobs:
             git reset --hard origin/main
             
             # Install dependencies and clear the cache
-            cat .env.prod | envsubst > .env
+            cp .env.prod .env
             
-            APP_ENV=prod ./bin/composer install --no-dev --optimize-autoloader
-            php bin/console cache:clear --env=prod
+            echo "DATABASE_URL={{ secrets.DATABASE_PROD_URL }}" >> .env
+            echo "APP_SECRET={{ secrets.APP_SECRET }}" >> .env
+            
+            ./bin/composer install --no-dev --optimize-autoloader
+            php bin/console cache:clear
             php bin/console asset-map:compile
             
-            php bin/console assets:install --no-debug --env=prod
+            php bin/console assets:install --no-debug
