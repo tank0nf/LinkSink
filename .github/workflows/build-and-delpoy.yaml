@@ -82,8 +82,8 @@ jobs:
             # Install dependencies and clear the cache
             cp .env.prod .env
             
-            echo "DATABASE_URL={{ secrets.DATABASE_PROD_URL }}" >> .env
-            echo "APP_SECRET={{ secrets.APP_SECRET }}" >> .env
+            echo "DATABASE_URL=${{ secrets.DATABASE_PROD_URL }}" >> .env
+            echo "APP_SECRET=${{ secrets.APP_SECRET }}" >> .env
             
             ./bin/composer install --no-dev --optimize-autoloader
             php bin/console cache:clear
