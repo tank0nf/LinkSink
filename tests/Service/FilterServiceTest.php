@@ -56,6 +56,25 @@ class FilterServiceTest extends TestCase
         $this->assertSame($categories, $result);
     }
 
+    public function testFindTagBySlugWithDashes()
+    {
+    $tag = new Tag();
+    $tag->setSlug('weser-kurier');
+    
+    $this->tagRepository->expects($this->at(0))
+        ->method('findOneBy')
+        ->with(['slug' => 'weser-kurier'])
+        ->willReturn(null);
+        
+    $this->tagRepository->expects($this->at(1))
+        ->method('findOneBy')
+        ->with(['slug' => 'weser kurier'])
+        ->willReturn($tag);
+    
+    $result = $this->filterService->findTagBySlug('weser-kurier');
+    $this->assertSame($tag, $result);
+    }
+
     public function testFindTagBySlug()
     {
         $tag = new Tag();

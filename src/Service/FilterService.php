@@ -31,7 +31,22 @@ class FilterService
 
     public function findTagBySlug(string $slug)
     {
-        return $this->tagRepository->findOneBy(['slug' => $slug]);
+        // First try direct match
+        $tag = $this->tagRepository->findOneBy(['slug' => $slug]);
+        
+        // If not found and slug contains dashes, try with spaces instead of dashes
+        if (!$tag && strpos($slug, '-') !== false) {
+            $alternativeSlug = str_replace('-', ' ', $slug);
+            $tag = $this->tagRepository->findOneBy(['slug' => $alternativeSlug]);
+        }
+        
+        // If not found and slug contains spaces, try with dashes instead of spaces
+        if (!$tag && strpos($slug, ' ') !== false) {
+            $alternativeSlug = str_replace(' ', '-', $slug);
+            $tag = $this->tagRepository->findOneBy(['slug' => $alternativeSlug]);
+        }
+        
+        return $tag;
     }
 
     public function findAllTags(): array
